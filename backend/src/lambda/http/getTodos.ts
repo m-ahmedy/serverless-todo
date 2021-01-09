@@ -9,7 +9,6 @@ import { getUserId } from '../utils'
 import { createLogger } from '../../utils/logger'
 
 const logger = createLogger('GetTodos')
-
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   logger.info('Processing event: ', event)
 

@@ -7,10 +7,13 @@ import warmup from '@middy/warmup'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { generateUploadUrl } from 'src/businessLogic/todoAttachments'
 import { updateAttachmentUrl } from 'src/businessLogic/todos'
+import { createLogger } from 'src/utils/logger'
 
+const logger = createLogger('GenerateUploadUrl')
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const todoId = event.pathParameters.todoId
+  logger.info('Processing event: ', event)
 
+  const todoId = event.pathParameters.todoId
   const uploadUrl = generateUploadUrl(todoId)
   await updateAttachmentUrl(todoId)
 

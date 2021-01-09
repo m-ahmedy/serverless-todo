@@ -9,13 +9,16 @@ import warmup from '@middy/warmup'
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import { getUserId } from '../utils'
 import { createTodoItem } from '../../businessLogic/todos'
+import { createLogger } from 'src/utils/logger'
 
+const logger = createLogger('CreateTodo')
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  logger.info('Processing event: ', event)
+
   const newTodo: CreateTodoRequest = JSON.parse(event.body)
   const userId = getUserId(event)
-
   const newItem = await createTodoItem({ ...newTodo }, userId)
-  // TODO: Implement creating a new TODO item
+
   return {
     statusCode: 201,
     body: JSON.stringify({

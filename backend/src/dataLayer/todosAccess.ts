@@ -41,6 +41,7 @@ export class TodosAccess {
             Item: todoItem
         }).promise()
 
+        logger.info(`Created the todo with ID ${todoItem.todoId} successfully`)
         return todoItem
     }
 
@@ -54,6 +55,7 @@ export class TodosAccess {
             }
         }).promise()
 
+        logger.info(`Deleted the todo with ID ${todoId} successfully`)
         return {
             todoId
         }
@@ -79,6 +81,7 @@ export class TodosAccess {
             }
         }).promise()
 
+        logger.info(`Updated the todo with ID ${todoId} successfully`)
         return
     }
 
@@ -96,6 +99,7 @@ export class TodosAccess {
             }
         }).promise()
 
+        logger.info(`Updated attachment URL for todo ${todoId} successfully`)
         return
     }
 }
