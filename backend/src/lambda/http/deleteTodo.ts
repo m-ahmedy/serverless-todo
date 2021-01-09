@@ -1,10 +1,33 @@
 import 'source-map-support/register'
 
-import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
+import { createLogger } from 'src/utils/logger'
+import { deleteTodoItem } from 'src/businessLogic/todos'
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+import middy from '@middy/core'
+import cors from '@middy/cors'
+import warmup from '@middy/warmup'
+
+const logger = createLogger('DeleteTodo')
+export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  logger.info('Processing event: ', event)
+
   const todoId = event.pathParameters.todoId
 
-  // TODO: Remove a TODO item by id
-  return undefined
-}
+  await deleteTodoItem(todoId)
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ todoId })
+  }
+})
+
+handler.use([
+  cors({
+    credentials: true,
+  } as any),
+  warmup({
+    isWarmingUp: e => e.source === 'serverless-plugin-warmup',
+    onWarmup: e => "It's warm!"
+  })
+])
