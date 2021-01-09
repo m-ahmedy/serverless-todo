@@ -1,10 +1,29 @@
 import 'source-map-support/register'
 
-import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
+import middy from '@middy/core'
+import cors from '@middy/cors'
+import warmup from '@middy/warmup'
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
+import { generateUploadUrl } from 'src/businessLogic/todoAttachments'
+
+export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId
 
-  // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
-  return undefined
-}
+  const uploadUrl = generateUploadUrl(todoId)
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ uploadUrl })
+  }
+})
+
+handler.use([
+  cors({
+    credentials: true,
+  } as any),
+  warmup({
+    isWarmingUp: e => e.source === 'serverless-plugin-warmup',
+    onWarmup: e => "It's warm!"
+  })
+])

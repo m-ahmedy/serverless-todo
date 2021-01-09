@@ -9,11 +9,12 @@ export class TodosAccess {
     constructor(
         private readonly docClient: DocumentClient = new AWS.DynamoDB.DocumentClient(),
         private readonly todosTable = process.env.TODOS_TABLE,
+        private readonly attachmentsBucket = process.env.TODO_ATTACHMENTS_S3_BUCKET,
     ) { }
 
     async getTodos(userId: string): Promise<TodoItem[]> {
         logger.info('Getting all Todo Items')
-        
+
         const result = await this.docClient.query({
             TableName: this.todosTable,
             KeyConditionExpression: 'userId = :userId',
@@ -29,11 +30,17 @@ export class TodosAccess {
 
     async createTodo(todoItem: TodoItem): Promise<TodoItem> {
         logger.info('Creating a Todo Item with ID ', todoItem.todoId)
+
+        const item = {
+            ...todoItem,
+            attachmentUrl: `https://${this.attachmentsBucket}.s3.amazonaws.com/${todoItem.todoId}`
+        }
+
         await this.docClient.put({
             TableName: this.todosTable,
-            Item: todoItem
+            Item: item
         }).promise()
 
-        return todoItem
+        return item
     }
 }
