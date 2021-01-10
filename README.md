@@ -70,7 +70,7 @@ It returns a new TODO item that looks like this:
 
 ```json
 {
-  "newItem": {
+  "item": {
     "todoId": "123",
     "createdAt": "2019-07-27T20:01:45.424Z",
     "name": "Buy milk",

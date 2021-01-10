@@ -17,12 +17,12 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
 
   const newTodo: CreateTodoRequest = JSON.parse(event.body)
   const userId = getUserId(event)
-  const newItem = await createTodoItem({ ...newTodo }, userId)
+  const item = await createTodoItem({ ...newTodo }, userId)
 
   return {
     statusCode: 201,
     body: JSON.stringify({
-      newItem,
+      item,
     })
   }
 })
